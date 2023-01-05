@@ -18,7 +18,6 @@ base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
 #crocs = ["CROC_5D", "CROD_57"]
 crocs = ["CROC_54"]
 
-#here we make a dictionary of the command names to be run, 'tasks' name inherited from Stella's script
 #need to fix the order of the scans, according to Luigi's schedule we have
 #
 #Threshold with initial config
@@ -36,23 +35,20 @@ tasks =['ShortRingOsc', 'MuxScan', 'VrefTrimming', 'ChipBottomScans', 'Tuning', 
 #^ need to figure out what the output looks like of all these and if we really want them all. only two use change the config 
 """
 #this list from Steve's old list
-#tasks = ['GlobalThresholdTuning', 'ThresholdEqualization', 'ThresholdScan', 'ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
-tasks = ['ShortRingOsc']
+tasks = ['GlobalThresholdTuning', 'ThresholdEqualization', 'ThresholdScan', 'ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
 
 #list of task names that will update the config
 update_config_tasks = ['GlobalThresholdTuning', 'ThresholdEqualization']
 
-#disable output list
-
-#hopefully we can implement this
+#hopefully we can implement this later - for tracking which scans need to be run with multiple configs
 multi_config_tasks = []
  
-#switch config to new tuning
+#switch config to new tuning IN PROGRESS
 def switch_config(croc, config_dir):
 	subprocess.run(f"mv {base_dir}/*toml {base_dir}/tmp/; mv {base_dir}/*xml {base_dir}/tmp/", cwd=f'{base_dir}/{croc}', shell=True)
 	subprocess.run("cp {config_dir}/* .", cwd=f'{croc}', shell=True)
 
-#restore original config
+#restore original config IN PROGRESS
 def restore_config():
 	print('in progress')
 
