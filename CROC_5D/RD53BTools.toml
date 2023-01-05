@@ -1,0 +1,241 @@
+[RegReader]
+type = "RD53BRegReader"
+args = {}
+
+[RegTest]
+type = "RD53BRegTest"
+args = { testRegs = true, testPixels = true, ServiceFrameSkip = 50 }
+
+[DigitalScan]
+type = "RD53BInjectionTool"
+
+[DigitalScan.args]
+injectionType = "Digital"
+nInjections = 50
+triggerDuration = 6
+triggerLatency = 133
+delayAfterPrime = 100
+delayAfterInject = 32
+delayAfterTrigger = 600
+offset = [0, 0]
+size = [0, 0]
+maskGen = [
+    { dim = 0, size = 0, parallel = false, shift = [1] },
+    { dim = 1, size = 4, parallel = true, shift = [] },
+    { dim = 1, size = 2, parallel = true, shift = [] },
+    { dim = 0, size = 1, parallel = true, shift = [4] },
+    { dim = 1, size = 0, parallel = true, shift = [] },
+    { dim = 0, size = 21, parallel = true, shift = [] }
+]
+
+# Regular analog scan: injects 1 pixel per column at a time
+[AnalogScan]
+type = "RD53BInjectionTool"
+
+[AnalogScan.args]
+injectionType = "Analog"
+nInjections = 100
+triggerDuration = 6
+triggerLatency = 133
+delayAfterPrime = 100
+delayAfterInject = 32
+delayAfterTrigger = 100
+offset = [0, 0]
+size = [0, 0]
+maskGen =  [
+    { dim = 0, size = 0, parallel = false, shift = [1] },
+    { dim = 1, size = 4, parallel = true, shift = [] },
+    { dim = 1, size = 2, parallel = true, shift = [] },
+    { dim = 0, size = 1, parallel = true, shift = [4] },
+    { dim = 1, size = 0, parallel = true, shift = [] }
+]
+
+# Fast analog scan: injects 8 pixels per column at a time
+[AnalogScanFast]
+type = "RD53BInjectionTool"
+
+[AnalogScanFast.args]
+injectionType = "Analog"
+nInjections = 100
+triggerDuration = 6
+triggerLatency = 133
+delayAfterPrime = 100
+delayAfterInject = 32
+delayAfterTrigger = 600
+offset = [0, 0]
+size = [0, 0]
+maskGen =  [
+    { dim = 0, size = 0, parallel = false, shift = [1] },
+    { dim = 1, size = 4, parallel = true, shift = [] },
+    { dim = 1, size = 2, parallel = true, shift = [] },
+    { dim = 0, size = 1, parallel = true, shift = [4] },
+    { dim = 1, size = 0, parallel = true, shift = [] },
+    { dim = 0, size = 8, parallel = true, shift = [] }
+]
+
+# Sparse analog scan: injects 1 pixels per column at a time but runs for only 10% (1 / frameStep) of the pixels
+[AnalogScanSparse]
+type = "RD53BInjectionTool"
+
+[AnalogScanSparse.args]
+injectionType = "Analog"
+nInjections = 100
+triggerDuration = 6
+triggerLatency = 133
+delayAfterPrime = 100
+delayAfterInject = 32
+delayAfterTrigger = 100
+offset = [0, 0]
+size = [0, 0]
+frameStep = 10
+maskGen = [
+    { dim = 0, size = 0, parallel = false, shift = [1] },
+    { dim = 1, size = 4, parallel = true, shift = [] },
+    { dim = 1, size = 2, parallel = true, shift = [] },
+    { dim = 0, size = 1, parallel = true, shift = [4] },
+    { dim = 1, size = 0, parallel = true, shift = [] }
+]
+
+[ThresholdScan]
+type = "RD53BThresholdScan"
+args = { injectionTool = "AnalogScan", vcalMed = 300, vcalRange = [0, 1000], vcalStep = 10 }
+
+[ThresholdScanFast]
+type = "RD53BThresholdScan"
+args = { injectionTool = "AnalogScanFast", vcalMed = 300, vcalRange = [0, 1000], vcalStep = 10 }
+
+[ThresholdScanSparse]
+type = "RD53BThresholdScan"
+args = { injectionTool = "AnalogScanSparse", vcalMed = 300, vcalRange = [0, 1000], vcalStep = 10 }
+
+[ThresholdEqualization]
+type = "RD53BThresholdEqualization"
+
+[ThresholdEqualization.args]
+thresholdScan = "ThresholdScanFast"
+injectionTool = "AnalogScanFast"
+targetThreshold = 0 # The Delta VCAL value to tune the threshold at. If it's 0 a threshold scan will be performed and the mean trheshold will be used.
+eliminateBias = false
+initialTDAC = 16
+nSteps = 7
+
+[GlobalThresholdTuning]
+type = "RD53BGlobalThresholdTuning"
+args = { injectionTool = "AnalogScanSparse", vcalMed = 300, gdacRange = [400, 500], targetThreshold = 545, maxStuckPixelRatio = 0.01 }
+
+[ThresholdTuning]
+type = "RD53BThresholdTuning"
+
+[ThresholdTuning.args]
+thresholdEqualization = "ThresholdEqualization"
+vcalMed = 300
+gdacRange = [380, 450]
+ldacRange = [0, 200]
+targetThreshold = 182
+aboveThresholdPixelRatio = 0.01
+belowThresholdPixelRatio = 0.01
+occupancyThresholdBelow = 0.9
+occupancyThresholdAbove = 0.1
+stuckPixelOccThreshold = 0.9
+
+[NoiseScan]
+type = "RD53BNoiseScan"
+
+[NoiseScan.args]
+nTriggers = 10000000
+readoutPeriod = 10000
+triggerPeriod = 35
+occupancyThreshold = 1e-6
+maskNoisyPixels = false
+
+[StuckPixelScan]
+type = "RD53BStuckPixelScan"
+args = { injectionTool = "AnalogScanFast", occupancyThreshold = 0.9 }
+
+[GainScan]
+type = "RD53BGainScan"
+args = { injectionTool = "AnalogScanFast", vcalRange = [500, 1500], vcalStep = 50 }
+
+[GainTuning]
+type = "RD53BGainTuning"
+args = { injectionTool = "AnalogScanFast", targetVcal = 1000, targetToT = 8.0, krumCurrRange = [0, 300] }
+
+[InjectionDelay]
+type = "RD53BInjectionDelay"
+args = { injectionTool = "AnalogScanFast", vcalMed = 300, vcalHigh = 3500 }
+
+[TimeWalkInjectionScan]
+type = "RD53BInjectionTool"
+
+[TimeWalkInjectionScan.args]
+injectionType = "Analog"
+nInjections = 100
+triggerDuration = 10
+triggerLatency = 135
+delayAfterPrime = 100
+delayAfterInject = 32
+delayAfterTrigger = 100
+offset = [0, 0]
+size = [0, 0]
+frameStep = 128
+maskGen = [
+    { dim = 0, size = 0, parallel = false, shift = [1] },
+    { dim = 1, size = 4, parallel = true, shift = [] },
+    { dim = 1, size = 2, parallel = true, shift = [] },
+    { dim = 0, size = 1, parallel = true, shift = [4] },
+    { dim = 1, size = 0, parallel = true, shift = [] },
+    { dim = 0, size = 1, parallel = true, shift = [] }
+]
+
+[TimeWalk]
+type = "RD53BTimeWalk"
+args = { injectionTool = "TimeWalkInjectionScan", storeHits = true, vcalRange = [0, 1500], vcalStep = 25 }
+
+[RingOsc]
+type = "RD53RingOscillator"
+args = {PSChannelID = "Front"}
+
+[ShortRingOsc]
+type = "RD53ShortRingOscillator"
+args = {}
+
+[MuxScan]
+type = "RD53MuxScan"
+args = {PSChannelID = "Front" }
+
+[IVScan]
+type = "RD53IVScan"
+args = { configFile = "/home/cms/works/power_supply/config/iv_it_croc_sldo.xml", type = "steps", powerSupplyName = "TTi_MX", multimeterName = "KeithleyMultimeter", powerSupplyVoltageProtection = 3.0, scanPointCurrentRange = [0.5, 2.0], scanPointCurrentStep = 0.1}
+
+[ADCScan]
+type = "RD53ADCScan"
+args = {PSChannelID = "Front"}
+
+[DACScan]
+type = "RD53DACScan"
+args = {PSChannelID = "Front"}
+
+[TempSensor]
+type = "RD53TempSensor"
+args = {PSChannelID = "Front"}
+
+[ShortTempSensor]
+type = "RD53ShortTempSensor"
+args = {PSChannelID = "Front"}
+
+[VrefTrimming]
+type = "RD53VrefTrimming"
+args = {PSChannelID = "Front"}
+
+[CapMeasureScan]
+type = "RD53BCapMeasureScan"
+args = {PSChannelID = "Front"}
+
+[CapMeasure]
+type = "RD53BCapMeasure"
+args = {PSChannelID = "Front"}
+
+[BERscanTest]
+type = "RD53BBERTscan"
+args = {}
+
