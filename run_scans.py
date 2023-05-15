@@ -7,17 +7,30 @@ import os
 import csv
 import subprocess
 import logging
+import colorlog
 from datetime import datetime
 
 #set up logging
+
+logger = logging.getLogger("irradiationDAQ")
+
+stdout = colorlog.StreamHandler(stream=sys.stdout)
+fileout = logging.FileHandler("log.log")
+
+stdout_fmt = colorlog.ColoredFormatter("%(name)s: %(white)s%(asctime)s%(reset)s | %(log_color)s%(levelname)s%(reset)s | %(log_color)s%(message)s%(reset)s")
+fileout_fmt = logging.Formatter("%(name)s: %(asctime)s | %(levelname)s | %(message)s")
+
+stdout.setFormatter(stdout_fmt)
+fileout.setFormatter(fileout_fmt)
+
+logger.addHandler(stdout)
+logger.addHandler(fileout)
+
 logging.basicConfig(
         filename='log.log', level=logging.DEBUG, 
         format=' %(levelname)s | %(asctime)s | %(message)s',
         datefmt='$Y-%m-%dT%H:%M:%SZ'
 )
-
-#date formats for the filenames and the entries in the log file respectively
-fmt = "%y_%m_%d-%H_%M_%S_%f"
 
 base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
 
@@ -68,7 +81,6 @@ def write_log(name, croc, start_time, end_time, status, output_dir):
 
 #Switch to a different config, storing the initial config in a tmp folder
 def do_tasks():
-    now = datetime.now().strftime(fmt)
     #loop over crocs
     for croc in crocs:
         #loop over tasks to be run
@@ -83,7 +95,6 @@ def do_tasks():
             os.mkdir(task_dir)
 
             #record time before starting task
-            start_time = datetime.now().strftime(fmt)
 
             #with open etc. for writing the terminal dump, command must be run inside
             with open(f'{task_dir}/terminal_dump.txt', 'a') as f:
