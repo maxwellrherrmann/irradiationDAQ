@@ -6,7 +6,15 @@
 import os
 import csv
 import subprocess
+import logging
 from datetime import datetime
+
+#set up logging with iso standard time
+logging.basicConfig(
+        filename='run_scans.log', level=logging.DEBUG, 
+        format=' %(levelname)s | %(asctime)s | %(message)s',
+        datefmt='$Y-%m-%dT%H:%M:%SZ'
+)
 
 #date formats for the filenames and the entries in the log file respectively
 fmt = "%y_%m_%d-%H_%M_%S_%f"
