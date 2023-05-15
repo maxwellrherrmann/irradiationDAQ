@@ -11,7 +11,7 @@ from datetime import datetime
 
 #set up logging with iso standard time
 logging.basicConfig(
-        filename='run_scans.log', level=logging.DEBUG, 
+        filename='log.log', level=logging.DEBUG, 
         format=' %(levelname)s | %(asctime)s | %(message)s',
         datefmt='$Y-%m-%dT%H:%M:%SZ'
 )
