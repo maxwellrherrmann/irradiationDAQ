@@ -9,7 +9,7 @@ import subprocess
 import logging
 from datetime import datetime
 
-#set up logging with iso standard time
+#set up logging
 logging.basicConfig(
         filename='log.log', level=logging.DEBUG, 
         format=' %(levelname)s | %(asctime)s | %(message)s',
@@ -73,7 +73,7 @@ def do_tasks():
     for croc in crocs:
         #loop over tasks to be run
         for task in tasks:
-            print(f"RUNNING {task}")
+            logging.info(f"Beginning {task}")
             i=1
             #manage the output directory names
             while os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}'):
@@ -87,7 +87,6 @@ def do_tasks():
 
             #with open etc. for writing the terminal dump, command must be run inside
             with open(f'{task_dir}/terminal_dump.txt', 'a') as f:
-                #writer = csv.writer(f, delimiter=',')
                 if task in update_config_tasks:	
                         subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[8:]} -s -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
                         print("CHANGING CONFIGS!")
@@ -95,23 +94,18 @@ def do_tasks():
                         subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[8:]} -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
 
             #record time when task finishes
-            end_time = datetime.now().strftime(fmt)
-            print(f"FINISHING {task}") 
+            logging.info(f"Finished {task}")
 
             #check if the task created its output: if it did, it passed, otherwise it failed (won't create output for failed scan)
             if os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}/{task}'):
                 status = "pass"
-                print(f"{task} PASS")
+                logging.info(f"{task} completed successfully")
 
                 #cleanup/rearrange directories sensibly
-                print("CLEANING DIRECTORIES")
+                logging.debug("cleaning directories")
                 subprocess.run(f"mv {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}/* {base_dir}/{croc}/Results/{task}/{task}_{i}/", shell=True)
                 subprocess.run(f"rm -rf {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}", shell=True)
             else:
                 status = "fail"
-                print(f"{task} FAIL")
-
-            #write to our general log file
-            write_log(task, croc, start_time, end_time, status, f'{croc}/{task_dir}') 
-
+                logging.error(f"{task} failed")
 do_tasks()
