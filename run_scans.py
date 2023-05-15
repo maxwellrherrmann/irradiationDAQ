@@ -8,6 +8,7 @@ import csv
 import subprocess
 import logging
 import colorlog
+import croniter
 from datetime import datetime
 
 #set up logging
@@ -32,6 +33,7 @@ logging.basicConfig(
         datefmt='$Y-%m-%dT%H:%M:%SZ'
 )
 
+# define the base directory
 base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
 
 #here we define a list of croc_names
