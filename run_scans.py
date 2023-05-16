@@ -123,7 +123,7 @@ def do_tasks():
                 status = "fail"
                 logging.error(f"{task} failed")
 
-now = datetime.datetime.now
+now = datetime.datetime.now()
 cron = croniter.croniter('15,45 * * * *', now)
 while True:
     try:
