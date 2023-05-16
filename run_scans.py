@@ -36,7 +36,7 @@ logging.basicConfig(
 )
 
 # print to notify successful startup (soon should include restatement of which crocs, etc.) AND when the next spillshould be...
-logging.info('Started up normally!')
+logger.info('Started up normally!')
 
 # define the base directory
 base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
