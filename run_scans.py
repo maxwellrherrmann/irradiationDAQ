@@ -133,3 +133,4 @@ while True:
         do_tasks()
     except KeyboardInterrupt:
         logger.warning('Killed by user, exiting gracefully')
+        exit(0)
