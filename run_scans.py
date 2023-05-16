@@ -9,7 +9,7 @@ import subprocess
 import logging
 import colorlog
 import croniter
-from datetime import datetime
+import datetime
 
 #set up logging
 
@@ -122,7 +122,7 @@ def do_tasks():
                 status = "fail"
                 logging.error(f"{task} failed")
 
-now = datetime.datetime(now)
+now = datetime.datetime.now
 cron = croniter.croniter('15,45 * * * *', now)
 while true:
     try:
