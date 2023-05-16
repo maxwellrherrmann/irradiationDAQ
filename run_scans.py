@@ -125,7 +125,7 @@ def do_tasks():
 
 now = datetime.datetime.now
 cron = croniter.croniter('15,45 * * * *', now)
-while true:
+while True:
     try:
         next_time = cron.get_next(datetime.datetime)
         sleep((next_time - now).seconds)
