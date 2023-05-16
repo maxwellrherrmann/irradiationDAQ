@@ -39,8 +39,9 @@ logging.basicConfig(
 logger.info('Started up normally!')
 
 # define the base directory
-base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
-base_dir = '/home/help/Test_CROC_SW/Ph2_ACF_CROC_20Sept22/MyDesktop/irradiationDAQ'
+# base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
+# base_dir = '/home/help/Test_CROC_SW/Ph2_ACF_CROC_20Sept22/MyDesktop/irradiationDAQ'
+base_dir = '.'
 
 #here we define a list of croc_names
 #this should be read in from a text file the user prepares! ridiculous. should have the option, flags
@@ -98,7 +99,7 @@ def do_tasks():
             #manage the output directory names
             while os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}'):
                 i+=1
-            task_dir =f'{base_dir}/{croc}/Results/{task}/{task}_{i}'
+            task_dir =f'{croc}/Results/{task}/{task}_{i}'
             #create the output directory
             os.mkdir(task_dir)
 
@@ -107,10 +108,10 @@ def do_tasks():
             #with open etc. for writing the terminal dump, command must be run inside
             with open(f'{task_dir}/terminal_dump.txt', 'a') as f:
                 if task in update_config_tasks:	
-                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[8:]} -s -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
+                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[len(croc)+1:]} -s -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
                         print("CHANGING CONFIGS!")
                 else:
-                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[8:]} -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
+                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[len(croc)+1:]} -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
 
             #record time when task finishes
             logger.info(f"Finished {task}")
