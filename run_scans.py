@@ -5,6 +5,7 @@
 
 import os
 import sys
+import time
 import csv
 import subprocess
 import logging
@@ -128,7 +129,7 @@ cron = croniter.croniter('15,45 * * * *', now)
 while True:
     try:
         next_time = cron.get_next(datetime.datetime)
-        sleep((next_time - now).seconds)
+        time.sleep((next_time - now).seconds)
         do_tasks()
     except KeyboardInterrupt:
         logger.warning('Killed by user, exiting gracefully')
