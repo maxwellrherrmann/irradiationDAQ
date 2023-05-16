@@ -40,6 +40,7 @@ logger.info('Started up normally!')
 
 # define the base directory
 base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
+base_dir = '/home/help/Test_CROC_SW/Ph2_ACF_CROC_20Sept22/MyDesktop/irradiationDAQ'
 
 #here we define a list of croc_names
 #this should be read in from a text file the user prepares! ridiculous. should have the option, flags
