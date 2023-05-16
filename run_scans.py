@@ -121,4 +121,13 @@ def do_tasks():
             else:
                 status = "fail"
                 logging.error(f"{task} failed")
-do_tasks()
+
+now = datetime.datetime(now)
+cron = croniter.croniter('15,45 * * * *', now)
+while true:
+    try:
+        next_time = cron.get_next(datetime.datetime)
+        sleep((next_time - now).seconds)
+        do_tasks()
+    except KeyboardInterrupt:
+        logger.warning('Killed by user, exiting gracefully')
