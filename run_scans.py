@@ -45,7 +45,7 @@ base_dir = '/home/help/Test_CROC_SW/Ph2_ACF_CROC_20Sept22/MyDesktop/irradiationD
 #here we define a list of croc_names
 #this should be read in from a text file the user prepares! ridiculous. should have the option, flags
 #crocs = ["CROC_5D", "CROD_57"]
-crocs = ["CROC_54"]
+crocs = ["CROC_5D"]
 
 #need to fix the order of the scans, according to Luigi's schedule we have
 #
@@ -134,6 +134,7 @@ while True:
     try:
         next_time = cron.get_next(datetime.datetime)
         time.sleep((next_time - now).seconds)
+        logger.info('Next run at %s', next_time)
         do_tasks()
     except KeyboardInterrupt:
         logger.warning('Killed by user, exiting gracefully')
