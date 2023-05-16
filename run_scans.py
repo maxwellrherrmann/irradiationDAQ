@@ -93,7 +93,7 @@ def do_tasks():
     for croc in crocs:
         #loop over tasks to be run
         for task in tasks:
-            logging.info(f"Beginning {task}")
+            logger.info(f"Beginning {task}")
             i=1
             #manage the output directory names
             while os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}'):
@@ -113,28 +113,28 @@ def do_tasks():
                         subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[8:]} -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
 
             #record time when task finishes
-            logging.info(f"Finished {task}")
+            logger.info(f"Finished {task}")
 
             #check if the task created its output: if it did, it passed, otherwise it failed (won't create output for failed scan)
             if os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}/{task}'):
                 status = "pass"
-                logging.info(f"{task} completed successfully")
+                logger.info(f"{task} completed successfully")
 
                 #cleanup/rearrange directories sensibly
-                logging.debug("cleaning directories")
+                logger.debug("cleaning directories")
                 subprocess.run(f"mv {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}/* {base_dir}/{croc}/Results/{task}/{task}_{i}/", shell=True)
                 subprocess.run(f"rm -rf {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}", shell=True)
             else:
                 status = "fail"
-                logging.error(f"{task} failed")
+                logger.error(f"{task} failed")
 
 now = datetime.datetime.now()
 cron = croniter.croniter('15,45 * * * *', now)
 while True:
     try:
         next_time = cron.get_next(datetime.datetime)
-        time.sleep((next_time - now).seconds)
         logger.info('Next run at %s', next_time)
+        time.sleep((next_time - now).seconds)
         do_tasks()
     except KeyboardInterrupt:
         logger.warning('Killed by user, exiting gracefully')
