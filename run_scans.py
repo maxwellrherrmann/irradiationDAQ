@@ -35,6 +35,9 @@ logging.basicConfig(
         datefmt='$Y-%m-%dT%H:%M:%SZ'
 )
 
+# print to notify successful startup (soon should include restatement of which crocs, etc.) AND when the next spillshould be...
+logging.info('Started up normally!')
+
 # define the base directory
 base_dir = '/home/hep/Test_CROC_SW/Ph2_ACF_24Dec22/MyDesktop/irradiationDAQ'
 
@@ -60,7 +63,7 @@ tasks =['ShortRingOsc', 'MuxScan', 'VrefTrimming', 'ChipBottomScans', 'Tuning', 
 #^ need to figure out what the output looks like of all these and if we really want them all. only two use change the config 
 """
 #this list from Steve's old list
-tasks = ['GlobalThresholdTuning', 'ThresholdEqualization', 'ThresholdScan', 'ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
+tasks = ['ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
 
 #list of task names that will update the config
 update_config_tasks = ['GlobalThresholdTuning', 'ThresholdEqualization']
