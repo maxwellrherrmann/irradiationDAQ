@@ -24,12 +24,6 @@ def switch_config(croc, config_dir):
 def restore_config():
 	print('in progress')
 
-#APPEND a new row to the log file
-def write_log(name, croc, start_time, end_time, status, output_dir):
-    with open('{base_dir}/log.csv', 'a') as f:
-        writer = csv.writer(f, delimiter=',')
-        writer.writerow([name, croc, start_time, end_time, status, output_dir]) 
-
 #Switch to a different config, storing the initial config in a tmp folder
 def do_tasks():
     #loop over crocs
@@ -72,6 +66,16 @@ def do_tasks():
                 logger.error(f"{task} failed")
 
 #argument parser
+parser = argparse.ArgumentParser(
+        prog='irradiationDAQ.py',
+        description='CROC DAQ designed for use in irradiations',
+        epilog='Created by Max Herrmann at CU Boulder')
+)
+parser.add_argument('-t', '--time', help='CRON style time information for when scans are to be run.', type=str, default='15,45 * * * *')
+parser.add_argument('--crocs', nargs='+', help='List of CROCs to be used in the DAQ', type=str, default=['CROC_5D'])
+parser.add_argument('--scans', nargs='+', help='List of scans to be run', type=str, default=['MuxScan', 'ShortRingOsc'])
+args = parser.parse_args()
+
 
 #set up logging
 
@@ -103,7 +107,9 @@ base_dir = '.'
 #here we define a list of croc_names
 #this should be read in from a text file the user prepares! ridiculous. should have the option, flags
 #crocs = ["CROC_5D", "CROD_57"]
-crocs = ["CROC_5D"]
+# crocs = ["CROC_5D"]
+crocs = args['crocs']
+
 
 #need to fix the order of the scans, according to Luigi's schedule we have
 #
@@ -122,7 +128,9 @@ tasks =['ShortRingOsc', 'MuxScan', 'VrefTrimming', 'ChipBottomScans', 'Tuning', 
 #^ need to figure out what the output looks like of all these and if we really want them all. only two use change the config 
 """
 #this list from Steve's old list
-tasks = ['ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
+# tasks = ['ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
+# silly naming convention
+tasks = args['scans']
 
 #list of task names that will update the config
 update_config_tasks = ['GlobalThresholdTuning', 'ThresholdEqualization']
