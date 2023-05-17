@@ -12,6 +12,66 @@ import logging
 import colorlog
 import croniter
 import datetime
+import argparse
+
+ 
+#switch config to new tuning IN PROGRESS
+def switch_config(croc, config_dir):
+	subprocess.run(f"mv {base_dir}/*toml {base_dir}/tmp/; mv {base_dir}/*xml {base_dir}/tmp/", cwd=f'{base_dir}/{croc}', shell=True)
+	subprocess.run("cp {config_dir}/* .", cwd=f'{croc}', shell=True)
+
+#restore original config IN PROGRESS
+def restore_config():
+	print('in progress')
+
+#APPEND a new row to the log file
+def write_log(name, croc, start_time, end_time, status, output_dir):
+    with open('{base_dir}/log.csv', 'a') as f:
+        writer = csv.writer(f, delimiter=',')
+        writer.writerow([name, croc, start_time, end_time, status, output_dir]) 
+
+#Switch to a different config, storing the initial config in a tmp folder
+def do_tasks():
+    #loop over crocs
+    for croc in crocs:
+        #loop over tasks to be run
+        for task in tasks:
+            logger.info(f"Beginning {task}")
+            i=1
+            #manage the output directory names
+            while os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}'):
+                i+=1
+            task_dir =f'{croc}/Results/{task}/{task}_{i}'
+            #create the output directory
+            os.mkdir(task_dir)
+
+            #record time before starting task
+
+            #with open etc. for writing the terminal dump, command must be run inside
+            with open(f'{task_dir}/terminal_dump.txt', 'a') as f:
+                if task in update_config_tasks:	
+                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[len(croc)+1:]} -s -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
+                        print("CHANGING CONFIGS!")
+                else:
+                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[len(croc)+1:]} -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
+
+            #record time when task finishes
+            logger.info(f"Finished {task}")
+
+            #check if the task created its output: if it did, it passed, otherwise it failed (won't create output for failed scan)
+            if os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}/{task}'):
+                status = "pass"
+                logger.info(f"{task} completed successfully")
+
+                #cleanup/rearrange directories sensibly
+                logger.debug("cleaning directories")
+                subprocess.run(f"mv {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}/* {base_dir}/{croc}/Results/{task}/{task}_{i}/", shell=True)
+                subprocess.run(f"rm -rf {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}", shell=True)
+            else:
+                status = "fail"
+                logger.error(f"{task} failed")
+
+#argument parser
 
 #set up logging
 
@@ -72,67 +132,10 @@ update_config_tasks = ['GlobalThresholdTuning', 'ThresholdEqualization']
 
 #hopefully we can implement this later - for tracking which scans need to be run with multiple configs
 multi_config_tasks = []
- 
-#switch config to new tuning IN PROGRESS
-def switch_config(croc, config_dir):
-	subprocess.run(f"mv {base_dir}/*toml {base_dir}/tmp/; mv {base_dir}/*xml {base_dir}/tmp/", cwd=f'{base_dir}/{croc}', shell=True)
-	subprocess.run("cp {config_dir}/* .", cwd=f'{croc}', shell=True)
-
-#restore original config IN PROGRESS
-def restore_config():
-	print('in progress')
-
-#APPEND a new row to the log file
-def write_log(name, croc, start_time, end_time, status, output_dir):
-    with open('{base_dir}/log.csv', 'a') as f:
-        writer = csv.writer(f, delimiter=',')
-        writer.writerow([name, croc, start_time, end_time, status, output_dir]) 
-
-#Switch to a different config, storing the initial config in a tmp folder
-def do_tasks():
-    #loop over crocs
-    for croc in crocs:
-        #loop over tasks to be run
-        for task in tasks:
-            logger.info(f"Beginning {task}")
-            i=1
-            #manage the output directory names
-            while os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}'):
-                i+=1
-            task_dir =f'{croc}/Results/{task}/{task}_{i}'
-            #create the output directory
-            os.mkdir(task_dir)
-
-            #record time before starting task
-
-            #with open etc. for writing the terminal dump, command must be run inside
-            with open(f'{task_dir}/terminal_dump.txt', 'a') as f:
-                if task in update_config_tasks:	
-                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[len(croc)+1:]} -s -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
-                        print("CHANGING CONFIGS!")
-                else:
-                        subprocess.run(f'RD53BminiDAQ -f CROC.xml -t RD53BTools.toml -o {task_dir[len(croc)+1:]} -h {task}', cwd=f'{base_dir}/{croc}', stdout=f, shell=True)
-
-            #record time when task finishes
-            logger.info(f"Finished {task}")
-
-            #check if the task created its output: if it did, it passed, otherwise it failed (won't create output for failed scan)
-            if os.path.exists(f'{base_dir}/{croc}/Results/{task}/{task}_{i}/{task}'):
-                status = "pass"
-                logger.info(f"{task} completed successfully")
-
-                #cleanup/rearrange directories sensibly
-                logger.debug("cleaning directories")
-                subprocess.run(f"mv {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}/* {base_dir}/{croc}/Results/{task}/{task}_{i}/", shell=True)
-                subprocess.run(f"rm -rf {base_dir}/{croc}/Results/{task}/{task}_{i}/{task}", shell=True)
-            else:
-                status = "fail"
-                logger.error(f"{task} failed")
-
-now = datetime.datetime.now()
-cron = croniter.croniter('15,45 * * * *', now)
 while True:
     try:
+        now = datetime.datetime.now()
+        cron = croniter.croniter('15,45 * * * *', now)
         next_time = cron.get_next(datetime.datetime)
         logger.info('Next run at %s', next_time)
         time.sleep((next_time - now).seconds)
