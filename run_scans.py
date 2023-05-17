@@ -89,7 +89,7 @@ fileout.setFormatter(fileout_fmt)
 logger.addHandler(stdout)
 logger.addHandler(fileout)
 
-logging.basicConfig(level=lologgergging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 # print to notify successful startup (soon should include restatement of which crocs, etc.) AND when the next spillshould be...
 logger.setLevel(logging.DEBUG)
