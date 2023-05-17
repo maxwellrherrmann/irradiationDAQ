@@ -129,6 +129,7 @@ update_config_tasks = ['GlobalThresholdTuning', 'ThresholdEqualization']
 
 #hopefully we can implement this later - for tracking which scans need to be run with multiple configs
 multi_config_tasks = []
+logger.info(f'Started normally! Running with "15,45 * * * *" and for "CROC_5D"')
 while True:
     try:
         now = datetime.datetime.now()
