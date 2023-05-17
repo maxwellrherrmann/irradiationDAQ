@@ -76,9 +76,12 @@ def do_tasks():
 #set up logging
 
 logger = logging.getLogger("irradiationDAQ")
+logger.setLevel(logging.DEBUG)
 
 stdout = colorlog.StreamHandler(stream=sys.stdout)
+stdout.setLevel(logging.DEBUG)
 fileout = logging.FileHandler("log.log")
+fileout.setLevel(logging.DEBUG)
 
 stdout_fmt = colorlog.ColoredFormatter("%(name)s: %(white)s%(asctime)s%(reset)s | %(log_color)s%(levelname)s%(reset)s | %(log_color)s%(message)s%(reset)s")
 fileout_fmt = logging.Formatter("%(name)s: %(asctime)s | %(levelname)s | %(message)s")
@@ -88,8 +91,6 @@ fileout.setFormatter(fileout_fmt)
 
 logger.addHandler(stdout)
 logger.addHandler(fileout)
-
-logging.basicConfig(level=logging.DEBUG)
 
 # print to notify successful startup (soon should include restatement of which crocs, etc.) AND when the next spillshould be...
 logger.setLevel(logging.DEBUG)
