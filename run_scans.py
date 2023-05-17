@@ -89,12 +89,6 @@ fileout.setFormatter(fileout_fmt)
 logger.addHandler(stdout)
 logger.addHandler(fileout)
 
-logging.basicConfig(
-        filename='log.log', level=logging.DEBUG, 
-        format=' %(levelname)s | %(asctime)s | %(message)s',
-        datefmt='$Y-%m-%dT%H:%M:%SZ'
-)
-
 # print to notify successful startup (soon should include restatement of which crocs, etc.) AND when the next spillshould be...
 logger.info('Started up normally!')
 
