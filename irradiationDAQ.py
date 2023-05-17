@@ -75,7 +75,7 @@ def do_tasks():
 
 #set up logging
 
-logger = logging.getLogger("irradiationDAQ")
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 stdout = colorlog.StreamHandler(stream=sys.stdout)
