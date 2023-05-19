@@ -1,4 +1,6 @@
-This is a program for data collection at the January 2023 CROC irradiation at Sandia National Lab.
+# irradiationDAQ for CROCs
+
+This is a program for CROC irradiation data collection (originally made for an irradiation at Sandia National Lab.
 
 For use (as it currently is) one need only run
 

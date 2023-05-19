@@ -67,7 +67,7 @@ def do_tasks():
 
 #argument parser
 parser = argparse.ArgumentParser(
-        prog='irradiationDAQ.py',
+        prog='python3 irradiationDAQ.py',
         description='CROC DAQ designed for use in irradiations',
         epilog='Created by Max Herrmann at CU Boulder'
 )
