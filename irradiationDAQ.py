@@ -69,7 +69,7 @@ def do_tasks():
 parser = argparse.ArgumentParser(
         prog='irradiationDAQ.py',
         description='CROC DAQ designed for use in irradiations',
-        epilog='Created by Max Herrmann at CU Boulder')
+        epilog='Created by Max Herrmann at CU Boulder'
 )
 parser.add_argument('-t', '--time', help='CRON style time information for when scans are to be run.', type=str, default='15,45 * * * *')
 parser.add_argument('--crocs', nargs='+', help='List of CROCs to be used in the DAQ', type=str, default=['CROC_5D'])
