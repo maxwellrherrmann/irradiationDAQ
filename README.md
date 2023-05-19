@@ -1,12 +1,34 @@
 # irradiationDAQ for CROCs
 
-This is a program for CROC irradiation data collection (originally made for an irradiation at Sandia National Lab.
+This is a program for CROC irradiation data collection (originally made for an irradiation at Sandia National Lab).
 
-For use (as it currently is) one need only run
+The program is written in python3 and uses the RD53BminiDAQ software to run scans. The output of running
 
-	$python3 run_scans.py
+$ python3 irradiationDAQ -h
 
-This will run a list of scans currently maintained only inside the python script in a list called
+```
+usage: python3 irradiationDAQ.py [-h] [-t TIME] [--crocs CROCS [CROCS ...]] [--scans SCANS [SCANS ...]]
+
+CROC DAQ designed for use in irradiations
+
+options:
+  -h, --help            show this help message and exit
+  -t TIME, --time TIME  CRON style time information for when scans are to be run.
+  --crocs CROCS [CROCS ...]
+                        List of CROCs to be used in the DAQ
+  --scans SCANS [SCANS ...]
+                        List of scans to be run
+
+Created by Max Herrmann at CU Boulder
+```
+
+
+This will run a list of scans provided by the user for each CROC (also list provided by user) at regular intervals as specified by the CRON style time information. The time information is a string of the form
+
+    {minute} {hour} {day of month} {month} {day of week}
+
+where each of these is an integer or a list of integers separated by commas.
+
 'tasks' (here the names appear as they do when run with RD53BminiDAQ) for each CROC. In the main
 program directory there live init.sh, run_scans.py, and log.csv. log.csv is a high-level log for
 monitoring the status of scans as they are run. The format of the columns is
