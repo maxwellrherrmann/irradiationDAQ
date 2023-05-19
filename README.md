@@ -50,3 +50,5 @@ be populated with boilerplate configuration files.
 
 Another utility included is clean.sh which deletes all the contents of the task directories (i.e.
 the `{task}_{number}` directories and their contents) which has proven worthwile in testing.
+
+Also included is a script `parse.py` for parsing the data into a few usable .csv files. It needs a bit of work now, but is fairly legible and really just compiles data from many scans while fixing a few typos in the output files.
