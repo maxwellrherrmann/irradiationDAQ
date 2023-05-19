@@ -108,7 +108,7 @@ base_dir = '.'
 #this should be read in from a text file the user prepares! ridiculous. should have the option, flags
 #crocs = ["CROC_5D", "CROD_57"]
 # crocs = ["CROC_5D"]
-crocs = args['crocs']
+crocs = args.crocs
 
 
 #need to fix the order of the scans, according to Luigi's schedule we have
@@ -130,18 +130,18 @@ tasks =['ShortRingOsc', 'MuxScan', 'VrefTrimming', 'ChipBottomScans', 'Tuning', 
 #this list from Steve's old list
 # tasks = ['ShortRingOsc', 'MuxScan', 'TempSensor', 'ShortRingOsc']
 # silly naming convention
-tasks = args['scans']
+tasks = args.scans
 
 #list of task names that will update the config
 update_config_tasks = ['GlobalThresholdTuning', 'ThresholdEqualization']
 
 #hopefully we can implement this later - for tracking which scans need to be run with multiple configs
 multi_config_tasks = []
-logger.info(f'Started normally! Running with "15,45 * * * *" and for "CROC_5D"')
+logger.info(f'Started normally! Running with "{args.time}" and for "{crocs}" with tasks "{tasks}"')
 while True:
     try:
         now = datetime.datetime.now()
-        cron = croniter.croniter('15,45 * * * *', now)
+        cron = croniter.croniter(args.time, now)
         next_time = cron.get_next(datetime.datetime)
         logger.info('Next run at %s', next_time)
         time.sleep((next_time - now).seconds)
