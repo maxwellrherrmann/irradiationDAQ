@@ -173,11 +173,11 @@ do
 			echo "Procedure Completion Percentage:  %$((${step_num} / ${num_comb}))"
 			echo "Currently running tdac = $TDAC, bias = $BIAS and ldac = $LDAC"
 			dest_path="${DIR}/BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}" #Where results will be found for this combination of LDAC and TDAC
-			if [ -d $dest_path ] #if you are continuing a run you can skip Threshold scan
+			if [ -f "$dest_path/ThresholdScan/results.root" ] #if you are continuing a run you can skip some Threshold scans if there is no results.root file
 			then
-				if [ -f "$dest_path/ThresholdScan/results.root" ] && ([ ! -f "$dest_path/Noise_Dist_BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}.pdf" ] || [ ! -f "$dest_path/Threshold_Dist_BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}.pdf" ] || [ ! -f "$dest_path/S_Curve_BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}.pdf" ])
+				if ([ ! -f "$dest_path/Noise_Dist_BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}.pdf" ] || [ ! -f "$dest_path/Threshold_Dist_BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}.pdf" ] || [ ! -f "$dest_path/S_Curve_BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}.pdf" ])
 				then
-					echo "Did not find results pdfs. Trying to lacte inside results.root file"
+					echo "Did not find results pdfs. Trying to locate inside results.root file"
 					sed "s/BIAS[0-9]*_TDAC[0-9]*_LDAC[0-9]*/BIAS${BIAS}_TDAC${TDAC}_LDAC${LDAC}/g" $macro_name -i
                                 	root -b -q -l $macro_name #used to run the modified macro to pull out pdfs from root file
 				fi
