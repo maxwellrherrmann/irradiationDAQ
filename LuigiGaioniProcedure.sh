@@ -203,7 +203,8 @@ do
 				done
 				if [ $scan_successful == false ]
 				then
-					echo "Error ran into an error which running ThresholdScan $num_tries times"
+					echo "Error: ran into $num_tries errors in a row while running ThresholdScan"
+					rm -r $dest_path
 					rm $macro_name
 					mv $temp_RD53B_name RD53B.toml #restore previous values in RD53B.toml
 					mv $temp_tdac_name tdac.csv #restore previous values in tdac.csv
